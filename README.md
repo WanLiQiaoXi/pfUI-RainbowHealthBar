@@ -4,6 +4,8 @@ This is an addon for World of Warcraft which is dependent on [pfUI](https://gith
 
 ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/124.gif)
 
+**The gradient rainbow bar is a clone from RUF which is build at v1.13.x not compatible with vanilla WOW.**
+
 ## 3D Portrait enhance
 
 You can also make a great behavior of 3D portrait by some feasible config.
