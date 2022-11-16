@@ -1,0 +1,18 @@
+## Interface: 11200
+## Author: WanLiQiaoXi
+## Title: |cff33ffccpf|cffffffffUI|cffaaaaaa [Rainbow Health Bar]
+## Email: WanLiQiaoXi@gmail.com
+## X-Date: 2022-11-02
+## Version: 1.0
+## Dependencies: pfUI
+## Notes: This is an extension of pfUI health bar!
+## Notes-zhCN: pfUI的彩虹血条！
+
+# scripts
+compat.lua
+share.lua
+translations_enUS.lua
+translations_zhCN.lua
+pfUI-ExtraBarTextures.lua
+pfUI-RainbowHealthBar.lua
+pfUI-PortraitEnhance.lua
