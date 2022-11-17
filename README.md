@@ -36,7 +36,7 @@ You can also make a great behavior of 3D portrait by some feasible config.
 
 ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/World_of_Warcraft_-_Player_Model_Height_Chart.png)
 
-**The different height makes the same configuration get a wrong performance. **
+**The different height makes the same configuration get a wrong performance.**
 
 ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/wrong_height_performance.png)
 
