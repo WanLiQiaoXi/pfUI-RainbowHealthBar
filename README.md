@@ -50,4 +50,4 @@ I copy some StatusBar textures from RUF and TukUI, you can change the health/pow
 
 All textures:
 
-![](https://github.com/WanLiQiaoXi/Assets/blob/main/WowAddons/pfUI-RainbowHealthBar/132.gif)
+![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/132.gif)
