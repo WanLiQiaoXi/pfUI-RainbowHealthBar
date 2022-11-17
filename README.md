@@ -42,3 +42,12 @@ You can also make a great behavior of 3D portrait by some feasible config.
 
 `So that you must add a template for every single creature or model type!!!`
 
+## More health bar textures
+
+I copy some StatusBar textures from RUF and TukUI, you can change the health/power bar texture from pfUI config panel.
+
+![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/130.gif)
+
+All textures:
+
+![](https://github.com/WanLiQiaoXi/Assets/blob/main/WowAddons/pfUI-RainbowHealthBar/132.gif)
