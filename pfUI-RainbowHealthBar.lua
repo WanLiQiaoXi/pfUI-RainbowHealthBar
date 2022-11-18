@@ -7,13 +7,18 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     -- config item keys
     local CIK = { 
         --      caption                                      key
-        [1] = { T["Rainbow Health Bar"],                     nil                       },
-        [2] = { T["Enable Rainbow Health Bar"],              "rainbowbar"              },
-        [3] = { T["Reverse The Rainbow Gradient Direction"], "rainbowbar_reverse"      },
-        [4] = { T["Orientation Of Rainbow Gradient"],        "rainbowbar_orientation"  },
-        [5] = { T["Enable Global Rainbow Gradient"],         "rainbowbar_global_color" },
-        [6] = { T["Duration Of Rainbow Flash"],              "rainbowbar_duration"     },
+        [1] = { T["Rainbow Health Bar"],                     nil                        },
+        [2] = { T["Enable Rainbow Health Bar"],              "rainbowbar"               },
+        [3] = { T["Reverse The Rainbow Gradient Direction"], "rainbowbar_reverse"       },
+        [4] = { T["Orientation Of Rainbow Gradient"],        "rainbowbar_orientation"   },
+        [5] = { T["Enable Global Rainbow Gradient"],         "rainbowbar_global_color"  },
+        [6] = { T["Duration Of Rainbow Flash"],              "rainbowbar_duration"      },
+        [7] = { T["Enable Fixed Rainbow Texture"],           "rainbowbar_tex_fixed"     },
+        [8] = { T["Rainbow Texture Alpha Mode"],             "rainbowbar_tex_alphamode" }
     }
+
+    local TEX_FILTER     = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Filter"
+    local TEX_TRANSPARENT = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Transparent"
 
     --[[
         REGEION: gradients
@@ -134,7 +139,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
 
     local function UpdateHealthBar(name, orientation, reverse, force)
         -- pfPlayer.hp.bar.bar:SetGradient('HORIZONTAL', minR, minG, minB, maxR, maxG, maxB)
-        if name == "raid" or name == "group" or name == "grouptarget" or name == "grouppet" then
+        if strfind(name, "^raid") or strfind(name, "^group")  then
             -- local n = name == "raid" and GetNumRaidMembers() or GetNumPartyMembers()
             local n   = name == "raid" and tonumber(C.unitframes.maxraid) or 4
             local sub = strfind(name, "group") and gsub(name, "group", "") or ""
@@ -157,21 +162,59 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     end
 
     local function ResetHealthBar(name)
-        if name == "raid" or name == "group" or name == "grouptarget" or name == "grouppet" then
+        if strfind(name, "^raid") or strfind(name, "^group")  then
             local n   = name == "raid" and tonumber(C.unitframes.maxraid) or 4
             local sub = strfind(name, "group") and gsub(name, "group", "") or ""
             
             for i = 1, n do
-                pfUI.uf:RefreshUnit((sub == "" and pfUI.uf[name][i] or pfUI.uf.group[i][sub]))
+                pfUI.uf:RefreshUnit(sub == "" and pfUI.uf[name][i] or pfUI.uf.group[i][sub])
             end
         elseif pfUI.uf[name] then 
             pfUI.uf:RefreshUnit(pfUI.uf[name])
         end
     end
 
+    local function ResetStatusBarBlendMode()
+        local frames = { "player", "target", "ttarget", "tttarget", "pet", "ptarget", "focus", "focustarget", "group", "grouptarget", "grouppet", "raid" }
+        
+        for _, frame in ipairs(frames) do
+            if strfind(frame, "^raid") or strfind(frame, "^group")  then
+                local n   = frame == "raid" and tonumber(C.unitframes.maxraid) or 4
+                local sub = strfind(frame, "group") and gsub(frame, "group", "") or ""
+                local uf
+                
+                for i = 1, n do
+                    uf = sub == "" and pfUI.uf[frame][i] or pfUI.uf.group[i][sub]
+                    
+                    uf.hp.bar.bar:SetBlendMode(C.unitframes[CIK[8][2]])
+                    uf.power.bar.bar:SetBlendMode(C.unitframes[CIK[8][2]])
+                end
+            elseif pfUI.uf[frame] then 
+                pfUI.uf[frame].hp.bar.bar:SetBlendMode(C.unitframes[CIK[8][2]])
+                pfUI.uf[frame].power.bar.bar:SetBlendMode(C.unitframes[CIK[8][2]])
+            end
+        end
+    end
+
     local function ConfigUpdateHandler(config, frame)
-        local timer    = nil
-        local callback = function()
+        local timer     = nil
+        local InitComps = function(bar, tex)
+            if bar then
+                bar.back = bar:CreateTexture(nil, "BACKGROUND", nil, -1)
+                bar.back:SetTexture(tex)
+                bar.back:SetAllPoints(bar)
+
+                bar.bar:SetTexture(TEX_TRANSPARENT)
+                bar.bar:SetBlendMode(C.unitframes[CIK[8][2]] or "MOD")
+
+                -- bar:SetStatusBarTexture(TEX_TRANSPARENT)
+                bar.SetStatusBarTextureOld = bar.SetStatusBarTexture
+                bar.SetStatusBarTexture    = function(self, tex)
+                    self.back:SetTexture(tex)
+                end
+            end
+        end
+        local callback  = function()
             if C.unitframes[config][CIK[2][2]] == "1" then
                 if tonumber(C.unitframes[CIK[6][2]]) > 0.1 then
                     UpdateRainbow(frame)
@@ -188,6 +231,50 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
             end
         end
 
+        -- setup a grey filter for target tap state
+        if strfind(frame, "^target") then
+            local bar = pfUI.uf[frame].hp.bar
+
+            bar.filter = bar:CreateTexture(nil, "OVERLAY", nil, -1)
+            bar.filter:SetTexture(TEX_FILTER)
+            bar.filter:SetAllPoints(bar)
+            bar.filter:SetBlendMode("ADD")
+            bar.filter:Hide()
+
+            -- hook SetStatusBarColor method to refresh
+            bar.SetStatusBarColorOld = bar.SetStatusBarColor
+            bar.SetStatusBarColor    = function(self, r, g, b, a)
+                if C.unitframes[config][CIK[2][2]] == "1" then
+                    if UnitIsTapped(frame) and not UnitIsTappedByPlayer(frame) then
+                        self.filter:Show()
+                    elseif self.filter:IsShown() then
+                        self.filter:Hide()
+                    end
+                else
+                    self:SetStatusBarColorOld(r, g, b, a)
+                end
+            end
+        end
+
+        -- setup alpha mode components
+        if C.unitframes[CIK[7][2]] == "1" then
+            if strfind(frame, "^raid") or strfind(frame, "^group")  then
+                local n   = frame == "raid" and tonumber(C.unitframes.maxraid) or 4
+                local sub = strfind(frame, "group") and gsub(frame, "group", "") or ""
+                local uf
+                
+                for i = 1, n do
+                    uf = sub == "" and pfUI.uf[frame][i] or pfUI.uf.group[i][sub]
+                    
+                    InitComps(uf.hp.bar, C.unitframes[config].bartexture)
+                    InitComps(uf.power.bar, C.unitframes[config].pbartexture)
+                end
+            elseif pfUI.uf[frame] then 
+                InitComps(pfUI.uf[frame].hp.bar, C.unitframes[config].bartexture)
+                InitComps(pfUI.uf[frame].power.bar, C.unitframes[config].pbartexture)
+            end
+        end
+
         return callback
     end
 
@@ -198,44 +285,68 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
         local c, t, f = settings[1], settings[2], settings[3]
         local UFGeneral = UnitFrames[t].area.scroll.content
         local OnShowOld = UFGeneral:GetScript("OnShow")
-        local ufunc     = ConfigUpdateHandler(c, f)
+        local ufunc
 
-        -- pfUI gui config
-        if c and not C.unitframes[c][CIK[4][2]] then
-            pfUI:UpdateConfig("unitframes", c, CIK[4][2], "HORIZONTAL")
-        elseif not c and (C.unitframes[CIK[4][2]] == nil)  then
-            if not C.unitframes[CIK[6][2]] then
-                pfUI:UpdateConfig("unitframes", nil, CIK[6][2], "0")
+        if c then
+            ufunc = ConfigUpdateHandler(c, f)
+
+            -- pfUI gui config
+            if not C.unitframes[c][CIK[4][2]] then
+                pfUI:UpdateConfig("unitframes", c, CIK[4][2], "HORIZONTAL")
             end
 
-            if not C.unitframes[CIK[5][2]] then
-                pfUI:UpdateConfig("unitframes", nil, CIK[5][2], "0")
+            if C.unitframes[c][CIK[2][2]] == "1" then
+                ufunc()
             end
-        end
 
-        if c and C.unitframes[c][CIK[2][2]] == "1" then
-            ufunc()
-        end
+            -- hook OnShow handler
+            UFGeneral:SetScript("OnShow", function()
+                -- release hook
+                this:SetScript("OnShow", OnShowOld)
 
-        -- hook OnShow handler
-        UFGeneral:SetScript("OnShow", function()
-            -- release hook
-            this:SetScript("OnShow", OnShowOld)
+                OnShowOld()
 
-            OnShowOld()
-
-            --- rainbowbar
-            CreateConfig(nil, CIK[1][1], nil, nil, "header")
-
-            if c then
+                --- rainbowbar
+                CreateConfig(nil, CIK[1][1], nil, nil, "header")
                 CreateConfig(ufunc, CIK[2][1], C.unitframes[c], CIK[2][2], "checkbox", "0")
                 CreateConfig(function() end, CIK[3][1], C.unitframes[c], CIK[3][2], "checkbox", "0")
                 CreateConfig(function() end, CIK[4][1], C.unitframes[c], CIK[4][2], "dropdown", pfUI.gui.dropdowns.orientation)
-            else
-                CreateConfig(function() if C.unitframes[CIK[5][2]] == "1" then GradientCache:InitGradientCache("general") else GradientCache["general"] = nil end end, CIK[5][1], C.unitframes, CIK[5][2], "checkbox", "0")
-                CreateConfig(nil, CIK[6][1], C.unitframes, CIK[6][2], nil, "0")
+            end)
+        else
+            -- pfUI gui config
+            if C.unitframes[CIK[4][2]] == nil then
+                if not C.unitframes[CIK[6][2]] then
+                    pfUI:UpdateConfig("unitframes", nil, CIK[6][2], "0")
+                end
+
+                if not C.unitframes[CIK[5][2]] then
+                    pfUI:UpdateConfig("unitframes", nil, CIK[5][2], "0")
+                end
             end
-        end)
+
+            if C.unitframes[CIK[7][2]] == "1" and not C.unitframes[CIK[8][2]] then
+                C.unitframes[CIK[8][2]] = "MOD"
+            end
+
+            -- hook OnShow handler
+            UFGeneral:SetScript("OnShow", function()
+                -- release hook
+                this:SetScript("OnShow", OnShowOld)
+
+                OnShowOld()
+
+                --- rainbowbar
+                CreateConfig(nil, CIK[1][1], nil, nil, "header")
+                CreateConfig(function() if C.unitframes[CIK[5][2]] == "1" then GradientCache:InitGradientCache("general") else GradientCache["general"] = nil end end, CIK[5][1], C.unitframes, CIK[5][2], "checkbox", "0")
+                CreateConfig(nil, CIK[7][1], C.unitframes, CIK[7][2], "checkbox", "0")
+
+                if C.unitframes[CIK[7][2]] == "1" then
+                    CreateConfig(ResetStatusBarBlendMode, CIK[8][1], C.unitframes, CIK[8][2], "dropdown", pfUI.gui.dropdowns.alphamode)
+                end
+
+                CreateConfig(nil, CIK[6][1], C.unitframes, CIK[6][2], nil, "0")
+            end)
+        end
     end
 
     local unitframeSettings = {
@@ -259,6 +370,15 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     pfUI.gui.dropdowns["orientation"] = {
         "HORIZONTAL:" .. T["Horizontal"],
         "VERTICAL:" .. T["Vertical"],
+    }
+
+    -- alpha mode dropdown list
+    pfUI.gui.dropdowns["alphamode"] = {
+        "DISABLE:" .. T["Disable"],
+        "BLEND:" .. T["Mode Blend"],
+        "ALPHAKEY:" .. T["Mode AlphaKey"],
+        "ADD:" .. T["Mode Add"],
+        "MOD:" .. T["Mode Mod"]
     }
 
     -- init general cache
