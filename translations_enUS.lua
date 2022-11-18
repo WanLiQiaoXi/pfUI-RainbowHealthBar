@@ -14,12 +14,17 @@ if pfUI_translation then
     pfUI_translation["enUS"]["Clone"]                                           = nil
     pfUI_translation["enUS"]["Clone Another Player's 3D Portrait Model Config"] = nil 
     pfUI_translation["enUS"]["Duration Of Rainbow Flash"]                       = nil
+    pfUI_translation["enUS"]["Enable Fixed Rainbow Texture"]                    = nil
     pfUI_translation["enUS"]["Enable Global 3D Portrait Enhance"]               = nil
     pfUI_translation["enUS"]["Enable Global Rainbow Gradient"]                  = nil
     pfUI_translation["enUS"]["Enable Rainbow Health Bar"]                       = nil
     pfUI_translation["enUS"]["Facial Feature"]                                  = nil
     pfUI_translation["enUS"]["Front View"]                                      = nil
     pfUI_translation["enUS"]["Load An 3D Portrait Model Config"]                = nil
+    pfUI_translation["enUS"]["Mode Add"]                                        = nil
+    pfUI_translation["enUS"]["Mode AlphaKey"]                                   = nil
+    pfUI_translation["enUS"]["Mode Blend"]                                      = nil
+    pfUI_translation["enUS"]["Mode Mod"]                                        = nil
     pfUI_translation["enUS"]["Offset"]                                          = nil
     pfUI_translation["enUS"]["Orientation Of Rainbow Gradient"]                 = nil
     pfUI_translation["enUS"]["Party Member"]                                    = nil
@@ -27,6 +32,7 @@ if pfUI_translation then
     pfUI_translation["enUS"]["Portrait Height"]                                 = nil
     pfUI_translation["enUS"]["Raid Member"]                                     = nil
     pfUI_translation["enUS"]["Rainbow Health Bar"]                              = nil
+    pfUI_translation["enUS"]["Rainbow Texture Alpha Mode"]                      = nil
     pfUI_translation["enUS"]["Remove"]                                          = nil
     pfUI_translation["enUS"]["Reset All Config Of 3D Portrait"]                 = nil 
     pfUI_translation["enUS"]["Reverse The Rainbow Gradient Direction"]          = nil
