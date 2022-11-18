@@ -51,3 +51,18 @@ I copy some StatusBar textures from RUF and TukUI, you can change the health/pow
 All textures:
 
 ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/132.gif)
+
+# Changes
+
+## 2022-11-18
+
+* add a gray filter layer to all targets' unitframe and you can easily distinguish your mobs from the other players
+  **Target**
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/target_tapped.png)
+  **TargetTarget**
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/targettarget_tapped.png)
+* now you can set the backdrop texture fix to the statusbar it belongs to and change the textures' blend mode
+  **before setting:**
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/135.gif)
+  **after setting:**
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/134.gif)
