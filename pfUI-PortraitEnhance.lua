@@ -2,7 +2,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
     if C.unitframes["always2dportrait"] == "1" then return end
 
     local CreateConfig, UnitFrames = pfUI.gui.CreateConfig, pfUI.gui.frames[T["Unit Frames"]]
-    -- local strlen, strsplit, strjoin, strfind, strsub, gsub, format, tonumber = strlen, strsplit, strjoin, strfind, strsub, gsub, format, tonumber
+    -- local strlen, rainbowstrsplit, rainbowstrjoin, strfind, strsub, gsub, format, tonumber = strlen, rainbowstrsplit, rainbowstrjoin, strfind, strsub, gsub, format, tonumber
     -- local GetRealmName, UnitName = GetRealmName, UnitName
     local CacheSliders = {}
     local CacheButtons = {}
@@ -125,7 +125,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
         --             scale      pos x,y,z  facing     size        offset      alpha       camera
         -- local keys = { CIK[3][2], CIK[4][2], CIK[5][2], CIK[6][2], CIK[7][2], CIK[12][2], CIK[13][2] }
         local keys = { CIK[3][2], CIK[4][2], CIK[5][2], CIK[13][2] }
-        local opts = cacheitem and { strsplit("/", cacheitem) } or nil
+        local opts = cacheitem and { rainbowstrsplit("/", cacheitem) } or nil
         local data = opts and GDB[opts[1]][opts[2]] or DB
 
         if category and C.unitframes[category] and data[frame] and data[frame][model] then
@@ -136,7 +136,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
     end
 
     local function HasConfig(category, frame, model, cacheitem)
-        local opts = cacheitem and { strsplit("/", cacheitem) } or nil
+        local opts = cacheitem and { rainbowstrsplit("/", cacheitem) } or nil
         local data = opts and GDB[opts[1]][opts[2]] or DB
 
         return category and C.unitframes[category] and data[frame] and data[frame][model]
@@ -804,7 +804,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                 portrait.model:SetFacing(portrait.category[CIK[5][2]] or 0)
             end
 
-            portrait.model:SetPosition(strsplit(",", portrait.category[CIK[4][2]] or "0,0,0"))
+            portrait.model:SetPosition(rainbowstrsplit(",", portrait.category[CIK[4][2]] or "0,0,0"))
         end
     end
 
@@ -921,7 +921,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                     LoadConfig(c, f, m)
                     
                     scale   = C.unitframes[c][CIK[3][2]]
-                    x, y, z = strsplit(",", C.unitframes[c][CIK[4][2]]) 
+                    x, y, z = rainbowstrsplit(",", C.unitframes[c][CIK[4][2]]) 
                     angle   = C.unitframes[c][CIK[5][2]]
                     camera  = C.unitframes[c][CIK[13][2]]
 
@@ -967,12 +967,12 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
         LoadConfig(category, frame, model)
 
         scale         = C.unitframes[category][CIK[3][2]]
-        x, y, z       = strsplit(",", C.unitframes[category][CIK[4][2]]) 
+        x, y, z       = rainbowstrsplit(",", C.unitframes[category][CIK[4][2]]) 
         angle         = C.unitframes[category][CIK[5][2]]
         camera        = C.unitframes[category][CIK[13][2]]
         alpha         = C.unitframes[category][CIK[12][2]]
-        width, height = strsplit(",", C.unitframes[category][CIK[6][2]]) 
-        ofx, ofy      = strsplit(",", C.unitframes[category][CIK[7][2]]) 
+        width, height = rainbowstrsplit(",", C.unitframes[category][CIK[6][2]]) 
+        ofx, ofy      = rainbowstrsplit(",", C.unitframes[category][CIK[7][2]]) 
         
         RefreshCacheCtrlStatus(frame, nil, scale, x, y, z, angle, camera + 1)
         SetPortraitAlpha(frame, alpha)
@@ -1043,7 +1043,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
     local function PortraitPositionChangeHandler()
         local parent  = this:GetParent()
         local sliders = parent.sliders
-        local x, y, z = strsplit(",", parent.category[parent.config])
+        local x, y, z = rainbowstrsplit(",", parent.category[parent.config])
         local pos     = { ["x"] = x, ["y"] = y, ["z"] = z }
 
         if sliders then
@@ -1052,21 +1052,21 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
             pos[this.label] = format("%.2f", this:GetValue())
         end
         
-        parent.category[parent.config] = strjoin(",", pos.x, pos.y, pos.z)
+        parent.category[parent.config] = rainbowstrjoin(",", pos.x, pos.y, pos.z)
     end
 
     local function PortraitSizeChangeHandler()
         local sliders = this:GetParent().sliders
         local w, h = format("%.2f", sliders[1]:GetValue()), format("%.2f", sliders[2]:GetValue())
         
-        this:GetParent().category[this:GetParent().config] = strjoin(",", w, h)
+        this:GetParent().category[this:GetParent().config] = rainbowstrjoin(",", w, h)
     end
 
     local function PortraitOffsetChangeHandler()
         local sliders = this:GetParent().sliders
         local ofx, ofy = format("%.2f", sliders[1]:GetValue()), format("%.2f", sliders[2]:GetValue())
         
-        this:GetParent().category[this:GetParent().config] = strjoin(",", ofx, ofy)
+        this:GetParent().category[this:GetParent().config] = rainbowstrjoin(",", ofx, ofy)
     end
 
     local function PortraitRestoreClickHandler(frame)
@@ -1089,7 +1089,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
             --             scale      pos x,y,z  facing     size        offset      alpha       camera
             -- local keys = { CIK[3][2], CIK[4][2], CIK[5][2], CIK[6][2], CIK[7][2], CIK[12][2], CIK[13][2] }
             local keys = { CIK[3][2], CIK[4][2], CIK[5][2], CIK[13][2] }
-            local realm, player = strsplit("/", ({ CacheButtons["general"]["data"]:GetSelection() })[2])
+            local realm, player = rainbowstrsplit("/", ({ CacheButtons["general"]["data"]:GetSelection() })[2])
             
             for frame, models in pairs(GDB[realm][player]) do
                 DB[frame] = DB[frame] or {}
@@ -1135,7 +1135,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                 LoadConfig(config, frame, mtext)
 
                 scale   = C.unitframes[config][CIK[3][2]]
-                x, y, z = strsplit(",", C.unitframes[config][CIK[4][2]]) 
+                x, y, z = rainbowstrsplit(",", C.unitframes[config][CIK[4][2]]) 
                 angle   = C.unitframes[config][CIK[5][2]]
                 camera  = C.unitframes[config][CIK[13][2]]
 
@@ -1209,8 +1209,8 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
         end
         local invoke          = function(c, f, u, bc, ac)
             if C.unitframes[c][CIK[2][2]] == "1" then
-                local width, height = strsplit(",", C.unitframes[c][CIK[6][2]])
-                local ofx, ofy      = strsplit(",", C.unitframes[c][CIK[7][2]])
+                local width, height = rainbowstrsplit(",", C.unitframes[c][CIK[6][2]])
+                local ofx, ofy      = rainbowstrsplit(",", C.unitframes[c][CIK[7][2]])
                 local alpha         = C.unitframes[c][CIK[12][2]] or C.unitframes[CIK[10][2]]
 
                 SetPortraitAlpha(f, alpha)
@@ -1244,7 +1244,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                     function()
                         if CacheInputs[model] and not IsGroupOrRaid and mtext ~= UNKNOWN_MODEL then
                             local scale   = C.unitframes[config][CIK[3][2]]
-                            local x, y, z = strsplit(",", C.unitframes[config][CIK[4][2]]) 
+                            local x, y, z = rainbowstrsplit(",", C.unitframes[config][CIK[4][2]]) 
                             local angle   = C.unitframes[config][CIK[5][2]]
                             local camera  = C.unitframes[config][CIK[13][2]]
                             
@@ -1307,7 +1307,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                         function()
                             if CacheInputs[model] then
                                 local scale   = C.unitframes[config][CIK[3][2]]
-                                local x, y, z = strsplit(",", C.unitframes[config][CIK[4][2]]) 
+                                local x, y, z = rainbowstrsplit(",", C.unitframes[config][CIK[4][2]]) 
                                 local angle   = C.unitframes[config][CIK[5][2]]
                                 local camera  = C.unitframes[config][CIK[13][2]]
 
@@ -1396,29 +1396,29 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
             [8]  = { function() SetPortraitCamera(f, caches[f][CIK[14][2]], C.unitframes[c][CIK[13][2]]); RefreshSaveButtonStatus(c, f) end, CIK[13][1], C.unitframes[c], CIK[13][2], "dropdown", function() return pfUI.gui.dropdowns.camera, { tab = f, key = "camera" } end },
             [9]  = { function() SetPortraitAlpha(f, C.unitframes[c][CIK[12][2]]) end, CIK[12][1], C.unitframes[c], CIK[12][2], "slider", { tab = f, key = "alpha", tips = CIK[12][3], text = CIK[12][4], val = C.unitframes[c][CIK[12][2]] or 0.35 } },
             [10] = { function() SetPortraitScale(f, caches[f][CIK[14][2]], C.unitframes[c][CIK[3][2]]); RefreshSaveButtonStatus(c, f) end, CIK[3][1], C.unitframes[c], CIK[3][2], "slider", { tab = f, key= "scale", tips = CIK[3][3], text = CIK[3][4], val = C.unitframes[c][CIK[3][2]] or 1, min = 0.1, max = 10, step = 0.05 } },
-            [11] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], strsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, CIK[4][1], C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "x", val = strsplit(",", C.unitframes[c][CIK[4][2]]) or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posx", tab = f } },
-            [12] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], strsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, "", C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "y", val = ({ strsplit(",", C.unitframes[c][CIK[4][2]]) })[2] or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posy", tab = f } },
-            [13] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], strsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, "", C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "z", val = ({ strsplit(",", C.unitframes[c][CIK[4][2]]) })[3] or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posz", tab = f } },
+            [11] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], rainbowstrsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, CIK[4][1], C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "x", val = rainbowstrsplit(",", C.unitframes[c][CIK[4][2]]) or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posx", tab = f } },
+            [12] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], rainbowstrsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, "", C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "y", val = ({ rainbowstrsplit(",", C.unitframes[c][CIK[4][2]]) })[2] or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posy", tab = f } },
+            [13] = { function() SetPortraitPosition(f, caches[f][CIK[14][2]], rainbowstrsplit(",", C.unitframes[c][CIK[4][2]])); RefreshSaveButtonStatus(c, f) end, "", C.unitframes[c], CIK[4][2], "slider", { callback = PortraitPositionChangeHandler, tips = CIK[4][3], text = "z", val = ({ rainbowstrsplit(",", C.unitframes[c][CIK[4][2]]) })[3] or 0, min = -30.00, max = 5, step = 0.01, disable = true, ref = "scale", key = "posz", tab = f } },
             [14] = { function() SetPortraitFacing(f, caches[f][CIK[14][2]], C.unitframes[c][CIK[5][2]]); RefreshSaveButtonStatus(c, f) end, CIK[5][1], C.unitframes[c], CIK[5][2], "slider", { tips = CIK[5][3], text = CIK[5][4], val = C.unitframes[c][CIK[5][2]] or 0, min = -5, max = 5, step = 0.05, disable = true, ref = "scale", key = "angle", tab = f } },
             [15] = { 
                 function() 
-                    local w, h = strsplit(",", C.unitframes[c][CIK[6][2]])
-                    local x, y = strsplit(",", C.unitframes[c][CIK[7][2]] or "0,0")
+                    local w, h = rainbowstrsplit(",", C.unitframes[c][CIK[6][2]])
+                    local x, y = rainbowstrsplit(",", C.unitframes[c][CIK[7][2]] or "0,0")
 
                     SetPortraitSize(f, caches[f][CIK[14][2]], w, h, x, y)
                 end, 
                 CIK[6][1], C.unitframes[c], CIK[6][2], "slider", 
                 { 
                     length = 2,
-                    { callback = PortraitSizeChangeHandler, tab = f, key = "width", tips = CIK[6][3], text = CIK[6][4], val = strsplit(",", C.unitframes[c][CIK[6][2]] or "120,48"), min = -1, max = 300, step = 1, width = 100, ofx = -175 },
-                    { callback = PortraitSizeChangeHandler, tab = f, key = "height", tips = CIK[6][3], text = CIK[6][5], val = ({ strsplit(",", C.unitframes[c][CIK[6][2]] or "120,48") })[2], min = -1, max = 300, step = 1, width = 100 }
+                    { callback = PortraitSizeChangeHandler, tab = f, key = "width", tips = CIK[6][3], text = CIK[6][4], val = rainbowstrsplit(",", C.unitframes[c][CIK[6][2]] or "120,48"), min = -1, max = 300, step = 1, width = 100, ofx = -175 },
+                    { callback = PortraitSizeChangeHandler, tab = f, key = "height", tips = CIK[6][3], text = CIK[6][5], val = ({ rainbowstrsplit(",", C.unitframes[c][CIK[6][2]] or "120,48") })[2], min = -1, max = 300, step = 1, width = 100 }
                 }
             },
-            [16] = { function() SetPortraitOffset(f, strsplit(",", C.unitframes[c][CIK[7][2]])) end, CIK[7][1], C.unitframes[c], CIK[7][2], "slider", 
+            [16] = { function() SetPortraitOffset(f, rainbowstrsplit(",", C.unitframes[c][CIK[7][2]])) end, CIK[7][1], C.unitframes[c], CIK[7][2], "slider", 
                 { 
                     length = 2,
-                    { callback = PortraitOffsetChangeHandler, tips = CIK[7][3], text = CIK[7][4], val = strsplit(",", C.unitframes[c][CIK[7][2]] or "0,0"), min = -300, max = 300, step = 1, width = 100, ofx = -175, disable = true, ref = "size", key = "ofx", tab = f },
-                    { callback = PortraitOffsetChangeHandler, tips = CIK[7][3], text = CIK[7][5], val = ({ strsplit(",", C.unitframes[c][CIK[7][2]] or "0,0") })[2], min = -300, max = 300, step = 1, width = 100, disable = true, ref = "size", key = "ofy", tab = f }
+                    { callback = PortraitOffsetChangeHandler, tips = CIK[7][3], text = CIK[7][4], val = rainbowstrsplit(",", C.unitframes[c][CIK[7][2]] or "0,0"), min = -300, max = 300, step = 1, width = 100, ofx = -175, disable = true, ref = "size", key = "ofx", tab = f },
+                    { callback = PortraitOffsetChangeHandler, tips = CIK[7][3], text = CIK[7][5], val = ({ rainbowstrsplit(",", C.unitframes[c][CIK[7][2]] or "0,0") })[2], min = -300, max = 300, step = 1, width = 100, disable = true, ref = "size", key = "ofy", tab = f }
                 }
             }
         }

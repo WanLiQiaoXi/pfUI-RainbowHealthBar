@@ -74,7 +74,7 @@ C_Timer = C_Timer or {
 --[[
     API: strsplit
 ]]
-function string.split(delimiter, str)
+function rainbow.string.split(delimiter, str)
     if type(delimiter) ~= "string" and type(delimiter) ~= "number" then
         error(format("bad argument #1 to 'split' (string expected, got %s)", delimiter and type(delimiter) or "no value"), 2)
     elseif type(str) ~= "string" and type(str) ~= "number" then
@@ -86,12 +86,12 @@ function string.split(delimiter, str)
 
     return unpack(fields)
 end
-strsplit = string.split
+rainbowstrsplit = rainbow.string.split
 
 --[[
     API: strjoin
 ]]
-function string.join(delimiter, ...)
+function rainbow.string.join(delimiter, ...)
     if type(delimiter) ~= "string" and type(delimiter) ~= "number" then
         error(format("bad argument #1 to 'join' (string expected, got %s)", delimiter and type(delimiter) or "no value"), 2)
     end
@@ -102,4 +102,4 @@ function string.join(delimiter, ...)
 
     return table.concat(arg, delimiter)
 end
-strjoin = string.join
+rainbowstrjoin = rainbow.string.join
