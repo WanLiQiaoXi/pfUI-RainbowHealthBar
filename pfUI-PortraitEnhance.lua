@@ -700,7 +700,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
             ["focustarget"       ] = "focustarget", 
             ["group"             ] = "group", 
             ["grouptarget"       ] = "grouptarget", 
-            ["grouppet"          ] = "grouppet", 
+            --["grouppet"          ] = "grouppet", 
             ["raid"              ] = "raid"
         }
         local portraits = {}
