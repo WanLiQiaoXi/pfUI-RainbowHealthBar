@@ -70,36 +70,3 @@ C_Timer = C_Timer or {
         return timerObj
     end
 }
-
---[[
-    API: strsplit
-]]
-function string.split(delimiter, str)
-    if type(delimiter) ~= "string" and type(delimiter) ~= "number" then
-        error(format("bad argument #1 to 'split' (string expected, got %s)", delimiter and type(delimiter) or "no value"), 2)
-    elseif type(str) ~= "string" and type(str) ~= "number" then
-        error(format("bad argument #2 to 'split' (string expected, got %s)", str and type(str) or "no value"), 2)
-    end
-
-    local fields = {}
-    gsub(str, format("([^%s]+)", delimiter), function(c) fields[getn(fields) + 1] = c end)
-
-    return unpack(fields)
-end
-strsplit = string.split
-
---[[
-    API: strjoin
-]]
-function string.join(delimiter, ...)
-    if type(delimiter) ~= "string" and type(delimiter) ~= "number" then
-        error(format("bad argument #1 to 'join' (string expected, got %s)", delimiter and type(delimiter) or "no value"), 2)
-    end
-
-    if arg.n == 0 then
-        return ""
-    end
-
-    return table.concat(arg, delimiter)
-end
-strjoin = string.join
