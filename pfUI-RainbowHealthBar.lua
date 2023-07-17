@@ -21,7 +21,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     local TEX_TRANSPARENT = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Transparent"
 
     --[[
-        REGEION: gradients
+        REGION: gradients
     --]]
     local function HSLtoRGB(h, s, l)
         if s == 0 then return l, l, l end
@@ -279,7 +279,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     end
 
     --[[
-        REGEION: main setups    
+        REGION: main setups    
     --]]
     local function Setup(settings)
         local c, t, f = settings[1], settings[2], settings[3]

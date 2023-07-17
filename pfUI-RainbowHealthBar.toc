@@ -10,7 +10,6 @@
 
 # scripts
 compat.lua
-share.lua
 translations_enUS.lua
 translations_zhCN.lua
 pfUI-ExtraBarTextures.lua
