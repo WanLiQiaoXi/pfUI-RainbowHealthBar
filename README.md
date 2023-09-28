@@ -14,6 +14,22 @@ You can also make a great behavior of 3D portrait by some feasible config.
 
 **Notice:** *Although i've done my best, that's even some bugs.*
 
+### More interesting things
+
+To have fun in an old game, I think it's more appealing than the game content itself. After all, the old game world has been played thousands of times, but it's worth looking into something new that is unknown to the player themselves.
+
+So I set out to implement the animation function of the 3D portrait model, it looks like the picture below shows:
+
+![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/p3d_giant_dragon_2.gif)
+
+For a huge model like a dragon, we can also achieve the style shown in the picture above through a certain configuration. You may be more concerned with the specific options of the configuration, and here I can give a personal template:
+
+![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/p3d_giant_dragon_conf.jpg)
+
+**Here** is an example after changing the animation of 3D portraits: 
+
+![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/p3d_giant_dragon.gif)
+
 ### You should through 3 solutions behind while you find the portrait gotta  wrong behavior
 
 * `Alt`+`z` to show/hide and refresh the UI
@@ -53,6 +69,20 @@ All textures:
 ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/132.gif)
 
 # Changes
+
+### 2023-09-28
+
+* fix:  make the slider smoother with continuous clicks
+
+* feature: add combobox widget for pfUI config
+
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/p3d_combobox_0.gif)
+
+* feature: add support for 3d portrait's animations
+
+  ![](https://raw.githubusercontent.com/WanLiQiaoXi/Assets/main/WowAddons/pfUI-RainbowHealthBar/p3d_seq_0.gif)
+
+* refactor: add the alpha value of 3d portrait model as the configuration cache data to ensure that each model has a separate alpha value
 
 ### 2022-11-18
 

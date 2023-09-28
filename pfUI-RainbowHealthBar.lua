@@ -2,22 +2,23 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     local CreateConfig, UnitFrames = pfUI.gui.CreateConfig, pfUI.gui.frames[T["Unit Frames"]]
     local GradientCache = {}
     local strfind, gsub, tonumber, ipairs = strfind, gsub, tonumber, ipairs
+    local CreateComboboxFrame, CreateSliderFrame = UWGT.CreateComboboxFrame, UWGT.CreateSliderFrame
     local globaltimer
 
     -- config item keys
     local CIK = { 
-        --      caption                                      key
-        [1] = { T["Rainbow Health Bar"],                     nil                        },
-        [2] = { T["Enable Rainbow Health Bar"],              "rainbowbar"               },
-        [3] = { T["Reverse The Rainbow Gradient Direction"], "rainbowbar_reverse"       },
-        [4] = { T["Orientation Of Rainbow Gradient"],        "rainbowbar_orientation"   },
-        [5] = { T["Enable Global Rainbow Gradient"],         "rainbowbar_global_color"  },
-        [6] = { T["Duration Of Rainbow Flash"],              "rainbowbar_duration"      },
-        [7] = { T["Enable Fixed Rainbow Texture"],           "rainbowbar_tex_fixed"     },
-        [8] = { T["Rainbow Texture Alpha Mode"],             "rainbowbar_tex_alphamode" }
+        --      caption                                      key                         extracap
+        [1] = { T["Rainbow Health Bar"],                     nil,                        nil           },
+        [2] = { T["Enable Rainbow Health Bar"],              "rainbowbar",               nil           },
+        [3] = { T["Reverse The Rainbow Gradient Direction"], "rainbowbar_reverse",       nil           },
+        [4] = { T["Orientation Of Rainbow Gradient"],        "rainbowbar_orientation",   nil           },
+        [5] = { T["Enable Global Rainbow Gradient"],         "rainbowbar_global_color",  nil           },
+        [6] = { T["Duration Of Rainbow Flash"],              "rainbowbar_duration",      T["Duration"] },
+        [7] = { T["Enable Fixed Rainbow Texture"],           "rainbowbar_tex_fixed",     nil           },
+        [8] = { T["Rainbow Texture Alpha Mode"],             "rainbowbar_tex_alphamode", nil           }
     }
 
-    local TEX_FILTER     = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Filter"
+    local TEX_FILTER      = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Filter"
     local TEX_TRANSPARENT = "Interface\\AddOns\\pfUI-RainbowHealthBar\\Textures\\HealthBar_Transparent"
 
     --[[
@@ -138,7 +139,6 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
     end
 
     local function UpdateHealthBar(name, orientation, reverse, force)
-        -- pfPlayer.hp.bar.bar:SetGradient('HORIZONTAL', minR, minG, minB, maxR, maxG, maxB)
         if strfind(name, "^raid") or strfind(name, "^group")  then
             -- local n = name == "raid" and GetNumRaidMembers() or GetNumPartyMembers()
             local n   = name == "raid" and tonumber(C.unitframes.maxraid) or 4
@@ -155,7 +155,6 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
             if force then
                 ForceUpdateHealthBar(pfUI.uf[name], name, orientation, reverse)
             else
-                -- pfUI.uf[name].hp.bar.bar:SetGradient(orientation, minR, minG, minB, maxR, maxG, maxB)
                 SetGradient(pfUI.uf[name].hp.bar.bar, name, orientation, reverse)
             end
         end
@@ -196,7 +195,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
         end
     end
 
-    local function ConfigUpdateHandler(config, frame)
+    local function ConfigUpdateHandler(category, frame)
         local timer     = nil
         local InitComps = function(bar, tex)
             if bar then
@@ -207,7 +206,6 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
                 bar.bar:SetTexture(TEX_TRANSPARENT)
                 bar.bar:SetBlendMode(C.unitframes[CIK[8][2]] or "MOD")
 
-                -- bar:SetStatusBarTexture(TEX_TRANSPARENT)
                 bar.SetStatusBarTextureOld = bar.SetStatusBarTexture
                 bar.SetStatusBarTexture    = function(self, tex)
                     self.back:SetTexture(tex)
@@ -215,19 +213,19 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
             end
         end
         local callback  = function()
-            if C.unitframes[config][CIK[2][2]] == "1" then
+            if C.unitframes[category][CIK[2][2]] == "1" then
                 if tonumber(C.unitframes[CIK[6][2]]) > 0.1 then
                     UpdateRainbow(frame)
-                    UpdateHealthBar(frame, C.unitframes[config][CIK[4][2]], C.unitframes[config][CIK[3][2]] == "1", true)
+                    UpdateHealthBar(frame, C.unitframes[category][CIK[4][2]], C.unitframes[category][CIK[3][2]] == "1", true)
                 end
 
                 timer = C_Timer.NewTicker(tonumber(C.unitframes[CIK[6][2]]), function()
                     UpdateRainbow(frame)
-                    UpdateHealthBar(frame, C.unitframes[config][CIK[4][2]], C.unitframes[config][CIK[3][2]] == "1")
+                    UpdateHealthBar(frame, C.unitframes[category][CIK[4][2]], C.unitframes[category][CIK[3][2]] == "1")
                 end, -1)
             elseif timer then
                 timer:Cancel()
-                ResetHealthBar(config)
+                ResetHealthBar(category)
             end
         end
 
@@ -244,7 +242,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
             -- hook SetStatusBarColor method to refresh
             bar.SetStatusBarColorOld = bar.SetStatusBarColor
             bar.SetStatusBarColor    = function(self, r, g, b, a)
-                if C.unitframes[config][CIK[2][2]] == "1" then
+                if C.unitframes[category][CIK[2][2]] == "1" then
                     if UnitIsTapped(frame) and not UnitIsTappedByPlayer(frame) then
                         self.filter:Show()
                     elseif self.filter:IsShown() then
@@ -266,16 +264,56 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
                 for i = 1, n do
                     uf = sub == "" and pfUI.uf[frame][i] or pfUI.uf.group[i][sub]
                     
-                    InitComps(uf.hp.bar, C.unitframes[config].bartexture)
-                    InitComps(uf.power.bar, C.unitframes[config].pbartexture)
+                    InitComps(uf.hp.bar, C.unitframes[category].bartexture)
+                    InitComps(uf.power.bar, C.unitframes[category].pbartexture)
                 end
             elseif pfUI.uf[frame] then 
-                InitComps(pfUI.uf[frame].hp.bar, C.unitframes[config].bartexture)
-                InitComps(pfUI.uf[frame].power.bar, C.unitframes[config].pbartexture)
+                InitComps(pfUI.uf[frame].hp.bar, C.unitframes[category].bartexture)
+                InitComps(pfUI.uf[frame].power.bar, C.unitframes[category].pbartexture)
             end
         end
 
         return callback
+    end
+
+    --[[
+        REGION: temp functions 
+    --]]
+    local function noop() end
+
+    local function CreateConfigEx(ufunc, caption, category, config, widget, values, skip, named, type, expansion)
+        local frame = CreateConfig(ufunc, caption, category, config, widget, values, skip, named, type, expansion)
+
+        -- use combobox widget
+        if widget == "combobox" and _G.type(values) == "function" then
+            local menus, opts = values()  -- for option settings of dropdown widget you need to set values to a function and return extra values
+
+            frame.input = CreateComboboxFrame(nil, frame, opts)
+            frame.input:SetupMenus(menus, category, config, ufunc)
+        end
+
+        -- use slider widget
+        if widget == "slider" then
+            frame.input = CreateSliderFrame(nil, frame, values, ufunc)
+        end
+
+        return frame
+    end
+
+    local function BarTextureChangeHandler(category, config, frame, bar)
+        if strfind(frame, "^raid") or strfind(frame, "^group")  then
+            local n   = frame == "raid" and tonumber(C.unitframes.maxraid) or 4
+            local sub = strfind(frame, "group") and gsub(frame, "group", "") or ""
+            local uf
+            
+            for i = 1, n do
+                uf = sub == "" and pfUI.uf[frame][i] or pfUI.uf.group[i][sub]
+                
+                uf[bar].bar:SetStatusBarTexture(C.unitframes[category][config])
+            end
+        elseif pfUI.uf[frame] then 
+            pfUI.uf[frame][bar].bar:SetStatusBarTexture(C.unitframes[category][config])
+        end
     end
 
     --[[
@@ -298,7 +336,7 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
             if C.unitframes[c][CIK[2][2]] == "1" then
                 ufunc()
             end
-
+            
             -- hook OnShow handler
             UFGeneral:SetScript("OnShow", function()
                 -- release hook
@@ -309,8 +347,12 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
                 --- rainbowbar
                 CreateConfig(nil, CIK[1][1], nil, nil, "header")
                 CreateConfig(ufunc, CIK[2][1], C.unitframes[c], CIK[2][2], "checkbox", "0")
-                CreateConfig(function() end, CIK[3][1], C.unitframes[c], CIK[3][2], "checkbox", "0")
-                CreateConfig(function() end, CIK[4][1], C.unitframes[c], CIK[4][2], "dropdown", pfUI.gui.dropdowns.orientation)
+                CreateConfig(noop, CIK[3][1], C.unitframes[c], CIK[3][2], "checkbox", "0")
+                CreateConfig(noop, CIK[4][1], C.unitframes[c], CIK[4][2], "dropdown", pfUI.gui.dropdowns.orientation)
+
+                -- combobox for bar texture in order to make selections easily on a long list
+                CreateConfigEx(function() BarTextureChangeHandler(c, 'bartexture', f, 'hp') end, T["Health Bar Texture"], C.unitframes[c], "bartexture", "combobox", function() return pfUI.gui.dropdowns.uf_bartexture, { noback = true } end)
+                CreateConfigEx(function() BarTextureChangeHandler(c, "pbartexture", f, 'power') end, T["Power Bar Texture"], C.unitframes[c], "pbartexture", "combobox", function() return pfUI.gui.dropdowns.uf_bartexture, { noback = true } end)
             end)
         else
             -- pfUI gui config
@@ -344,7 +386,8 @@ pfUI:RegisterModule("rainbowhealthbar", "vanilla:tbc", function ()
                     CreateConfig(ResetStatusBarBlendMode, CIK[8][1], C.unitframes, CIK[8][2], "dropdown", pfUI.gui.dropdowns.alphamode)
                 end
 
-                CreateConfig(nil, CIK[6][1], C.unitframes, CIK[6][2], nil, "0")
+                -- CreateConfig(nil, CIK[6][1], C.unitframes, CIK[6][2], nil, "0")
+                CreateConfigEx(nil, CIK[6][1], C.unitframes, CIK[6][2], "slider", { tips = CIK[6][1], text = CIK[6][3], val = C.unitframes[CIK[6][2]] or 0, min = 0, max = 1, step = 0.01 })
             end)
         end
     end
