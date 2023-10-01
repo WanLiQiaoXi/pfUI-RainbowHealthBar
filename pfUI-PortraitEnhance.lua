@@ -448,7 +448,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                 portrait.model:SetHeight(-1)
                 portrait.model:SetAllPoints(portrait)
                 portrait.model:SetCamera(0)
-                portrait.model:SetAlpha(tonumber(C.unitframes[CIK[10][2]]))
+                portrait.model:SetAlpha(portrait.location == "bar" and tonumber(C.unitframes[CIK[10][2]]) or portrait:GetAlpha())
             end
 
             portrait.model:SetSequenceTime(portrait.model.animation.sequence, portrait.model.animation.elapsed)
@@ -531,10 +531,10 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                         C.unitframes[c][CIK[3][2]]  = "1"
                         C.unitframes[c][CIK[4][2]]  = "0.00,0.00,0.00"
                         C.unitframes[c][CIK[5][2]]  = "0"
-                        C.unitframes[c][CIK[12][2]] = C.unitframes[CIK[10][2]]
+                        C.unitframes[c][CIK[12][2]] = format("%.2f", p.localtion == "bar" and C.unitframes[CIK[10][2]] or p:GetAlpha())
                         C.unitframes[c][CIK[13][2]] = "0"
 
-                        RefreshCacheCtrlStatus(f, p, C.unitframes[CIK[10][2]], 1, 0, 0, 0, 0, 1)
+                        RefreshCacheCtrlStatus(f, p, C.unitframes[CIK[10][2]] + 0, 1, 0, 0, 0, 0, 1)
                         RefreshUnitPortrait(p)
                     end
                 else
@@ -945,7 +945,7 @@ pfUI:RegisterModule("protraitenhance", "vanilla:tbc", function ()
                     else
                         SetAlphaOld(self, alpha)
                     end
-
+                    
                     -- refresh unit portrait rendor while portrait location is update
                     if self.location ~= self.parent.config.portrait then
                         self.location = self.parent.config.portrait
